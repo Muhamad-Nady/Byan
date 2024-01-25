@@ -24,7 +24,6 @@ google-cloud-core==2.4.1
 google-cloud-translate==3.13.0
 google-generativeai==0.3.2
 googleapis-common-protos==1.62.0
-googletrans==4.0.0rc1
 grpcio==1.60.0
 grpcio-status==1.60.0
 gunicorn==21.2.0
