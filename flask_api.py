@@ -17,7 +17,7 @@ genai.configure(api_key=gemini_api_key)
 
 model = genai.GenerativeModel('gemini-pro')
 
-few_shot = pd.read_excel("Quaran_labeled_data.xlsx")
+few_shot = pd.read_excel("quaran_labeled.xlsx")
 array_range_25 = np.arange(len(few_shot))
 random_numbers = np.random.choice(array_range_25, size=7, replace=False)
 few_shot_example = few_shot.iloc[random_numbers, :]
@@ -26,19 +26,18 @@ for value in range(len(few_shot_example)):
     prompt = f"prompt_{value}"
     completion = f"label_{value}"
     few_shot_dict[prompt] = few_shot.iloc[value, 0]
-    few_shot_dict[completion] = few_shot.iloc[value, 1]
+    few_shot_dict[completion] = f"{few_shot.iloc[value, 1]} و {few_shot.iloc[value, 2]}"    # print(f"promtpt: {few_shot_dict[prompt]}")
 
 def classify(few_shot_dict, input_text):
     few_temp = """في النص القادم بعض الامثلة لكلام عن القرأن الكريم موضح اذا كان هذا الكلام إيجابي أو سلبي {few_shot_dict}
-    بناء علي الأمثلة السابقة الرجاء تحديد ما اذا كان المثال الاتي ايجابي ام سلبي {template}""".format(
-        few_shot_dict=few_shot_dict, template=input_text)
-    prompt: str = few_temp
+      بناء علي الأمثلة السابقة الرجاء تحديد ما اذا كان المثال الاتي {template} ايجابي ام سلبي في حالة ان كان النص سلبي يجب الرد علي الشبهة كما موضح في الامثلة السابقة """.format(few_shot_dict=few_shot_dict,template=input_text)
+    prompt :str = few_temp
     try:
         response = model.generate_content(
             prompt,
             generation_config=genai.types.GenerationConfig(
                 candidate_count=1,
-                max_output_tokens=300,
+                max_output_tokens=1024,
                 temperature=0.7
             ))
         generated_content = response.text
